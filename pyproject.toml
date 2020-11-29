@@ -1,11 +1,21 @@
 [tool.poetry]
 name = "baronerd"
 version = "0.1.0"
-description = ""
+description = "A simple local barometric pressure measurement logger and plotter using the DarkSky API"
 authors = ["roboto84 <none>"]
+license = "GPL-3.0-or-later"
+readme = "README.rst"
+homepage = ""
+repository = ""
+documentation = ""
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pandas = "^1.1.4"
+matplotlib = "^3.3.3"
+requests = "^2.25.0"
+python-dotenv = "^0.15.0"
+APScheduler = "^3.6.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -13,3 +23,5 @@ pytest = "^5.2"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
