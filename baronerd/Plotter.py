@@ -62,28 +62,22 @@ class Plotter:
 
     def run_plot(self):
         full_path_data_file = os.path.join(self.HOME_PATH, self.data_file)
-        if os.path.isfile(full_path_data_file):
-            print('Data file exists, proceeding to plot')
-            plot_time_interval = 10000
-            if self.delta_graph:
-                graph_type = 'scatter'
-            else:
-                graph_type = 'plot'
-
-            table_settings = {
-                'data_col1': self.data_col1,
-                'data_col2': self.data_col2,
-                'x_label': self.x_label,
-                'y_label': self.y_label,
-                'table_title_interval': 'BaroNerd | {}'.format(self.table_title_interval)
-            }
-
-            new_plot = Plot(full_path_data_file, table_settings, plot_time_interval, graph_type)
-            new_plot.show_plot()
-
+        plot_time_interval = 10000
+        if self.delta_graph:
+            graph_type = 'scatter'
         else:
-            print('Data file does not exist. Please assure a data file exists before attempting a plot')
-            exit()
+            graph_type = 'plot'
+
+        table_settings = {
+            'data_col1': self.data_col1,
+            'data_col2': self.data_col2,
+            'x_label': self.x_label,
+            'y_label': self.y_label,
+            'table_title_interval': 'BaroNerd | {}'.format(self.table_title_interval)
+        }
+
+        new_plot = Plot(full_path_data_file, table_settings, plot_time_interval, graph_type)
+        new_plot.show_plot()
 
 
 if __name__ == '__main__':

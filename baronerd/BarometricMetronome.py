@@ -4,18 +4,23 @@ import requests
 import json
 import ntpath
 import os
-from dotenv import load_dotenv
-from datetime import datetime
+import logging.config
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
+from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 from bin.BaronerdSettings import File_Settings
 
 
 class BarometricMetronome:
     HOME_PATH = ntpath.dirname(__file__)
+    logging.config.fileConfig(fname=os.path.join(HOME_PATH, 'bin/logging.conf'), disable_existing_loggers=False)
 
     def __init__(self, api_key, location_lat_long, query_interval, trim_interval, num_of_readings):
+        self.logger = logging.getLogger(type(self).__name__)
+        self.logger.setLevel(logging.INFO)
+
         self.live_data_file = self.get_full_file_path(File_Settings['live_data']['data_file'])
         self.next_48_hours_data_file = self.get_full_file_path(File_Settings['next_48_hours']['data_file'])
         self.next_7_days_data_file = self.get_full_file_path(File_Settings['next_7_days']['data_file'])
@@ -37,7 +42,7 @@ class BarometricMetronome:
             scheduler.add_job(self.trim_data, 'interval', seconds=self.trim_date_interval)
             scheduler.start()
         except KeyboardInterrupt:
-            print('Received a KeyboardInterrupt... now exiting')
+            self.logger.warning("Received a KeyboardInterrupt... exiting process")
             exit()
 
     @staticmethod
@@ -70,8 +75,8 @@ class BarometricMetronome:
                 diffData.write('%s,%s\n' % (diff, pos))
 
     @staticmethod
-    def write_live_data(pressure, current_time, file_name):
-        print(pressure, current_time)
+    def write_live_data(logger, pressure, current_time, file_name):
+        logger.info(f'{pressure} inHg')
         with open(file_name, 'a') as liveData:
             liveData.write('%s,%s\n' % (pressure, current_time))
 
@@ -93,7 +98,7 @@ class BarometricMetronome:
         if response:
             weather = json.loads(response.text)
             currently = weather.get('currently')
-            self.write_live_data(self.transform_to_inhg_pressure(currently.get('pressure')),
+            self.write_live_data(self.logger, self.transform_to_inhg_pressure(currently.get('pressure')),
                                  self.standard_time(currently.get('time'), 'live'), self.live_data_file)
             self.write_next_data(weather.get('hourly').get('data'), self.next_48_hours_data_file, 'hourly')
             self.write_next_data(weather.get('daily').get('data'), self.next_7_days_data_file, 'daily')
@@ -101,10 +106,11 @@ class BarometricMetronome:
             self.write_diff(self.delta(weather.get('daily').get('data')), self.next_7_days_data_diff_file)
             self.process_data_feeds()
         else:
-            print('API Status code: ', response.status_code)
+            self.logger.error(f'API Status code: {response.status_code}')
 
     def trim_data(self):
         # check if data file has reach the configured live data limit
+        self.logger.debug('trim data running')
         with open(self.live_data_file, 'r') as data:
             num_lines = sum(1 for line in data)
 
@@ -128,7 +134,7 @@ if __name__ == '__main__':
     NUM_OF_LIVE_READINGS = int(os.getenv('NUM_OF_LIVE_READINGS'))
     COORDINATES_LAT_LONG = os.getenv('COORDINATES_LAT_LONG')
 
-    print('Barometric data collector will run every {} seconds for coordinates {}:\n'.format(QUERY_API_INTERVAL,
+    print('\nBarometric data collector will run every {} seconds for coordinates {}:'.format(QUERY_API_INTERVAL,
                                                                                              COORDINATES_LAT_LONG))
     barometric_metronome = BarometricMetronome(DARK_SKY_API_KEY,
                                                COORDINATES_LAT_LONG,

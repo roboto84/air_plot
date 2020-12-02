@@ -1,6 +1,8 @@
 # A general GUI data graph plot
 
 import os.path
+import ntpath
+import logging.config
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -8,7 +10,13 @@ from bin.PlotSettings import default_plot_theme
 
 
 class Plot:
+    HOME_PATH = ntpath.dirname(__file__)
+    logging.config.fileConfig(fname=os.path.join(HOME_PATH, 'logging.conf'), disable_existing_loggers=False)
+
     def __init__(self, data_file, table_settings, interval, graph_type='plot'):
+        self.logger = logging.getLogger(type(self).__name__)
+        self.logger.setLevel(logging.INFO)
+
         self.data_file = data_file
         self.graph_type = graph_type
         self.table_settings = table_settings
@@ -23,6 +31,7 @@ class Plot:
 
     def show_plot(self):
         if os.path.isfile(self.data_file):
+            self.logger.info('Data file exists... attempting to plot')
             plt.style.use('fivethirtyeight')
             fig = plt.figure()
             fig.set_facecolor(self.background_color)
@@ -32,24 +41,24 @@ class Plot:
                 ani = FuncAnimation(fig, self.animate, interval=self.interval)
                 plt.show()
             except KeyboardInterrupt:
-                print('Received a KeyboardInterrupt... now exiting')
+                self.logger.warning('Received a KeyboardInterrupt... exiting process')
                 exit()
         else:
-            print('Data file does not exist. Please assure data file exists before attempting a plot')
+            self.logger.error('Data file does not exist. Please assure data file exists before attempting a plot')
             exit()
 
     @staticmethod
-    def read_in_data_file(data_file):
+    def read_in_data_file(logger, data_file):
         try:
             data = pd.read_csv(data_file)
             return data
         except ValueError:
-            print('It appears the data file is not structure correctly, possibly missing columns, check csv format... '
-                  'now exiting')
+            logger.error('It appears the data file is not structure correctly, possibly missing columns, check '
+                         'csv format... now exiting')
             exit()
 
     def animate(self, i):
-        data = self.read_in_data_file(self.data_file)
+        data = self.read_in_data_file(self.logger, self.data_file)
         x_values = data[self.table_settings['data_col1']]
         y_values = data[self.table_settings['data_col2']]
 
@@ -89,5 +98,6 @@ class Plot:
                 y_buffer_interval = y_range / 15
                 axes.set_ylim([min(y_values) - y_buffer_interval, max(y_values) + y_buffer_interval])
             except ValueError:
-                print('It appears the data file may not be populated.  Can not plot empty data set... now exiting')
+                self.logger.error('It appears the data file may not be populated.  Can not plot empty data set... '
+                                  'now exiting')
                 exit()
