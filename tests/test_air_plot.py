@@ -1,4 +1,4 @@
-from baronerd import __version__
+from air_plot import __version__
 
 
 def test_version():

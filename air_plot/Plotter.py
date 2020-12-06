@@ -1,9 +1,9 @@
-# Barometric time interval plotter
+# Air properties time interval plotter
 
 import sys
 import ntpath
 import os.path
-from bin.BaronerdSettings import File_Settings
+from bin.AirSettings import File_Settings
 from bin.Plot import Plot
 from bin.PlotSettings import Plotter_Settings
 
@@ -73,7 +73,7 @@ class Plotter:
             'data_col2': self.data_col2,
             'x_label': self.x_label,
             'y_label': self.y_label,
-            'table_title_interval': 'BaroNerd | {}'.format(self.table_title_interval)
+            'table_title_interval': 'AirPlot Barometric Pressure | {}'.format(self.table_title_interval)
         }
 
         new_plot = Plot(full_path_data_file, table_settings, plot_time_interval, graph_type)
@@ -81,5 +81,5 @@ class Plotter:
 
 
 if __name__ == '__main__':
-    barometric_plot = Plotter()
-    barometric_plot.run_plot()
+    air_plot = Plotter()
+    air_plot.run_plot()
