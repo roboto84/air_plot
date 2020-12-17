@@ -6,7 +6,7 @@ import logging.config
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from bin.PlotSettings import default_plot_theme
+from bin.plot_settings import default_plot_theme
 
 
 class Plot:

@@ -9,7 +9,7 @@ default_plot_theme = {
     'fig_title_color': '#EEEEEE'
 }
 
-Plotter_Settings = {
+plotter_settings = {
     'data_col1': 'Time',
     'data_col2': 'Pressure',
     'y_label': 'pressure (inHg)',

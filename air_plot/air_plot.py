@@ -3,54 +3,54 @@
 import sys
 import ntpath
 import os.path
-from bin.AirSettings import File_Settings
-from bin.Plot import Plot
-from bin.PlotSettings import Plotter_Settings
+from bin.air_settings import file_settings
+from bin.plot import Plot
+from bin.plot_settings import plotter_settings
 
 
-class Plotter:
+class AirPlot:
     HOME_PATH = ntpath.dirname(__file__)
 
     def __init__(self):
         self.delta_graph = False
-        self.data_file = File_Settings['live_data']['data_file']
-        self.data_col1 = Plotter_Settings['data_col1']
-        self.data_col2 = Plotter_Settings['data_col2']
-        self.x_label = Plotter_Settings['hourly_data']['x_label']
-        self.y_label = Plotter_Settings['y_label']
-        self.table_title_interval = Plotter_Settings['live_data']['table_title_interval']
+        self.data_file = file_settings['live_data']['data_file']
+        self.data_col1 = plotter_settings['data_col1']
+        self.data_col2 = plotter_settings['data_col2']
+        self.x_label = plotter_settings['hourly_data']['x_label']
+        self.y_label = plotter_settings['y_label']
+        self.table_title_interval = plotter_settings['live_data']['table_title_interval']
 
         if len(sys.argv) == 2 or len(sys.argv) == 3:
             if self.diff() or self.diff2():
                 self.delta_graph = True
                 self.data_col1 = '{} Interval'.format(self.data_col1)
                 self.data_col2 = '{} Delta'.format(self.data_col2)
-                self.y_label = Plotter_Settings['diff_labels']['y_label']
-                self.x_label = Plotter_Settings['hourly_data']['diff_labels']['x_label']
+                self.y_label = plotter_settings['diff_labels']['y_label']
+                self.x_label = plotter_settings['hourly_data']['diff_labels']['x_label']
 
             if sys.argv[1] == 'live':
                 if self.diff():
-                    self.data_file = File_Settings['live_data']['diff_file']
+                    self.data_file = file_settings['live_data']['diff_file']
                     self.table_title_interval = '{} Delta'.format(self.table_title_interval)
                 elif self.diff2():
-                    self.data_file = File_Settings['live_data']['diff2_file']
+                    self.data_file = file_settings['live_data']['diff2_file']
                     self.table_title_interval = '{} 2nd Delta'.format(self.table_title_interval)
 
             elif sys.argv[1] == '48hr':
-                self.data_file = File_Settings['next_48_hours']['data_file']
-                self.table_title_interval = Plotter_Settings['next_48_hours']['table_title_interval']
+                self.data_file = file_settings['next_48_hours']['data_file']
+                self.table_title_interval = plotter_settings['next_48_hours']['table_title_interval']
                 if self.diff():
-                    self.data_file = File_Settings['next_48_hours']['diff_file']
+                    self.data_file = file_settings['next_48_hours']['diff_file']
                     self.table_title_interval = '{} Delta'.format(self.table_title_interval)
 
             elif sys.argv[1] == '7day':
-                self.data_file = File_Settings['next_7_days']['data_file']
-                self.table_title_interval = Plotter_Settings['next_7_days']['table_title_interval']
-                self.x_label = Plotter_Settings['daily_data']['x_label']
+                self.data_file = file_settings['next_7_days']['data_file']
+                self.table_title_interval = plotter_settings['next_7_days']['table_title_interval']
+                self.x_label = plotter_settings['daily_data']['x_label']
                 if self.diff():
-                    self.data_file = File_Settings['next_7_days']['diff_file']
+                    self.data_file = file_settings['next_7_days']['diff_file']
                     self.table_title_interval = '{} Delta'.format(self.table_title_interval)
-                    self.x_label = Plotter_Settings['daily_data']['diff_labels']['x_label']
+                    self.x_label = plotter_settings['daily_data']['diff_labels']['x_label']
 
     @staticmethod
     def diff():
@@ -81,5 +81,5 @@ class Plotter:
 
 
 if __name__ == '__main__':
-    air_plot = Plotter()
+    air_plot = AirPlot()
     air_plot.run_plot()
