@@ -1,6 +1,6 @@
 #  Configuration for different plot themes
 
-default_plot_theme = {
+default_plot_theme: dict = {
     'background_color': '#292929',
     'graph_values_color': '#FF6100',
     'axis_value_color': '#D66C00',
@@ -9,7 +9,7 @@ default_plot_theme = {
     'fig_title_color': '#EEEEEE'
 }
 
-plotter_settings = {
+plotter_settings: dict = {
     'data_col1': 'Time',
     'data_col2': 'Pressure',
     'y_label': 'pressure (inHg)',
